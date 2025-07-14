@@ -14,6 +14,7 @@ def parse_args():
     parser.add_argument("--data_dir", type=str, default="data")
     parser.add_argument("--video_dir", type=str, default="data/videos")
     parser.add_argument("--clip_dir", type=str, default="data/clips")
+    parser.add_argument("--output_dir", type=str, default="data/output")
     parser.add_argument("--label_map_path", type=str, default="data/label_map.txt")
     parser.add_argument("--clip_size", type=int, default=30)
     args = parser.parse_args()
@@ -110,45 +111,58 @@ def initialize(video_list: list, clip_size: int, data_dir: str):
     return output_path
 
 
-def cutting_video_to_clips(video_list: list, clip_size: int, clip_dir: str):
+def cutting_video_to_clips(video_list: list, clip_size: int, clip_dir: str, output_dir: str = "data/output"):
     logger.log(f"[bold] ‣ Cutting videos into clips of size {clip_size}... [/bold]")
     
     if not os.path.exists(clip_dir):
         os.makedirs(clip_dir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     for video_path in video_list:
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
             raise ValueError(f"Could not open video file '{video_path}'.")
 
-        # 파일명에서 확장자 제거
         video_name = os.path.basename(video_path).split('.')[0]
-        cur_video_dir = os.path.join(clip_dir, video_name)
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        # 원본 비디오의 FPS 가져오기
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        clip_count = total_frames // clip_size
+        cur_clip_dir = os.path.join(clip_dir, video_name)
+        
+        os.makedirs(cur_clip_dir, exist_ok=True)
 
-        os.makedirs(cur_video_dir, exist_ok=True)
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        clip_count = total_frames // clip_size
+        
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
         for i in tqdm(range(clip_count), desc=f"Processing {video_name}({video_path}) to clips"):
             start_frame = i * clip_size
-
             cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-            frames = []
+            
+            frames_for_gif = []
+            
+            output_mp4_path = os.path.join(output_dir, f"{video_name}_{i}.mp4")
+            out_mp4 = cv2.VideoWriter(output_mp4_path, fourcc, fps, (width, height))
+
             for _ in range(clip_size):
                 ret, frame = cap.read()
                 if not ret:
                     break
-                # imageio는 RGB 순서를 사용하므로 색상 채널 변환
+                
+                # MP4 저장을 위해 원본 프레임 사용
+                out_mp4.write(frame)
+                
+                # GIF 저장을 위해 RGB로 변환하여 저장
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                frames.append(rgb_frame)
+                frames_for_gif.append(rgb_frame)
 
-            if frames:
-                # 저장할 파일 경로의 확장자를 .gif로 변경
-                output_clip_path = os.path.join(cur_video_dir, f"{i}.gif")
-                # imageio를 사용해 GIF로 저장
-                imageio.mimsave(output_clip_path, frames, fps=fps, loop=0)
+            out_mp4.release()
+
+            if frames_for_gif:
+                output_gif_path = os.path.join(cur_clip_dir, f"{i}.gif")
+                imageio.mimsave(output_gif_path, frames_for_gif, fps=fps, loop=0)
 
         cap.release()
         

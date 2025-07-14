@@ -56,3 +56,17 @@ streamlit run app.py
 이후, 터미널에 표시되는 URL롤 접속하여 라벨값을 조정합니다.
 
 ![demo](resource/demo.png)
+
+작업 중 오류가 발생하여 다시 작업을 이어 진행하려면 아래 명령어를 입력합니다.
+
+```bash
+streamlit run app.py
+```
+
+라벨링 작업을 완료한 후, 터미널에서 `ctrl + c` 를 입력하여 웹 UI를 종료합니다.
+
+라벨링 `csv`파일을 얻기 위해 아래 명령어를 실행합니다.
+
+```bash
+python compose.py
+```

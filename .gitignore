@@ -213,3 +213,5 @@ data/videos/*.mov
 
 data/clips
 data/output_data.json
+
+data/output

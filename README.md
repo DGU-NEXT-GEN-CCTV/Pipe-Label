@@ -36,6 +36,8 @@ pip install -r requirements.txt
 
 ## Preparation
 
+> 이 모듈의 입력 동영상을 구성하기 위해 [`Pipe-Mask`](https://github.com/DGU-NEXT-GEN-CCTV/Pipe-Mask) 모듈을 황용합니다.
+
 이 모듈을 통해 마스킹 및 분리할 동영상 파일을 준비합니다. (`.mp4`, `.avi`, `.mov` 확장자의 동영상을 지원합니다.)
 
 준비된 동영상을 `data/videos` 디렉토리에 위치시킵니다.
@@ -71,4 +73,4 @@ streamlit run app.py
 python compose.py
 ```
 
-이 모듈에서 생성된 `data/output` 디렉토리는, [`Pipe-Action`](https://github.com/DGU-NEXT-GEN-CCTV/Pipe-Action) 모듈에서 입력값으로 사용됩니다.
+> 이 모듈에서 생성된 `data/output` 디렉토리는, [Pipe-Action](https://github.com/DGU-NEXT-GEN-CCTV/Pipe-Action) 모듈에서 입력값으로 사용됩니다.

@@ -1,6 +1,7 @@
 import os
 import json
 import csv
+import shutil
 from argparse import ArgumentParser
 from utils.logger import Logger
 
@@ -38,6 +39,7 @@ def main():
     args = parse_args()
     
     label_map = load_label_map(args.label_map)
+    shutil.copy(args.label_map, os.path.join(args.output_dir, 'label_map.txt'))
     
     logger.log(f"[bold] ‣ Loading label list from {args.label}... [/bold]")
     label = json.load(open(args.label, 'r'))

@@ -70,3 +70,5 @@ streamlit run app.py
 ```bash
 python compose.py
 ```
+
+이 모듈에서 생성된 `data/output` 디렉토리는, [`Pipe-Action`](https://github.com/DGU-NEXT-GEN-CCTV/Pipe-Action) 모듈에서 입력값으로 사용됩니다.

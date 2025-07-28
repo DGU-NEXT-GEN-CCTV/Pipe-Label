@@ -179,8 +179,8 @@ def update_label(video_name: str, label_map: dict, label: list, clip_idx: int, j
     if not video_name_flag:
         raise ValueError(f"Video '{video_name}' not found in the JSON data.")
     video_index = data['video_list'].index(video_name)
-    
-    clip_index_flag = clip_idx < len(data['label_list'])
+
+    clip_index_flag = clip_idx < len(data['label_list'][video_index]['label'])
     if not clip_index_flag:
         raise ValueError(f"Clip index {clip_idx} is out of range for video '{video_name}'.")
     
